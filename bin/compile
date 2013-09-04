@@ -31,21 +31,11 @@ VENV=$BUILD_DIR/venv
 export PATH=$APYBIN:$PATH
 
 puts-step "Creating virtualenv"
-virtualenv $VENV | indent
+virtualenv --extra-search-dir=$ROOT_DIR/virtualenv_support $VENV | indent
 
 if [ -f $BUILD_DIR/requirements.txt ]; then
     puts-step "Installing requirements via pip"
 
-    # virtualenv requires pip and setuptools tarballs, which the
-    # ActivePython distribute does not include.
-    mkdir -p $CACHE_DIR/pip-support
-    cd $CACHE_DIR/pip-support
-    wget -q -c https://pypi.python.org/packages/source/p/pip/pip-1.4.1.tar.gz#md5=6afbb46aeb48abac658d4df742bff714
-    wget -q -c https://pypi.python.org/packages/source/s/setuptools/setuptools-1.1.tar.gz#md5=84062633c3818c912af76d54a40d11a7
-    cd -
-    
     ls -l $VENV/bin
-    $VENV/bin/pip --extra-search-dir=$CACHE_DIR/pip-support install -r $BUILD_DIR/requirements.txt | indent
+    $VENV/bin/pip install -r $BUILD_DIR/requirements.txt | indent
 fi
-
-ls -lR $BUILD_DIR
