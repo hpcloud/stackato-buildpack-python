@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# -*- sh -*-
+
+BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
+BUILD_DIR=$1
+
+cat <<EOF
+---
+config_vars:
+  PATH: venv/bin:$PATH
+EOF
