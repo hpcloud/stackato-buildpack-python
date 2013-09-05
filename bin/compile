@@ -5,7 +5,7 @@
 set -eo pipefail
 
 # for DEBUG; remove me.
-set -x
+# set -x
 
 # Paths.
 BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
@@ -39,11 +39,9 @@ virtualenv --extra-search-dir=$ROOT_DIR/virtualenv_support $VENV | indent
 
 if [ -f $BUILD_DIR/requirements.txt ]; then
     puts-step "Installing requirements via pip"
-
-    ls -l $VENV/bin
-    $VENV/bin/pip install -r $BUILD_DIR/requirements.txt | indent
+    $VENV/bin/pip install --use-mirrors -r $BUILD_DIR/requirements.txt | indent
 fi
 
-echo "-----> Building runtime environment"
+puts-step "Building runtime environment"
 mkdir -p $BUILD_DIR/.profile.d
-echo "export PATH=\"\$HOME/venv/bin::\$PATH\"" > $BUILD_DIR/.profile.d/venv.sh
+echo 'export PATH="$HOME/venv/bin::$PATH"' > $BUILD_DIR/.profile.d/venv.sh
