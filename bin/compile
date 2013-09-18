@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# -*- sh -*-
+# -*- bash -*-
 
 # Fail fast and fail hard.
 set -eo pipefail
@@ -15,27 +15,33 @@ CACHE_DIR=$2
 
 source $BIN_DIR/utils
 
-# ActivePython isn't installed yet.
+# TODO: ActivePython isn't installed in our v2 VMs yet.
+# http://bugs.activestate.com/show_bug.cgi?id=100291
+# Workaround by installing Python here, until that bug is resolved.
 if [ ! -e /opt/ActivePython-2.7 ]; then
     puts-step "Installing ActivePython 2.7.5.6"
     rm -rf $CACHE_DIR/x
     mkdir -p $CACHE_DIR/x
     cd $CACHE_DIR/x
+    # XXX: not downloading tarball, but rsycing to dea_ng during dev
     tar zxf $ROOT_DIR/ActivePython*gz
     cd Acti*
     ./install.sh -I $BUILD_DIR/opt/ActivePython-2.7 | indent
 
     APYBIN=$BUILD_DIR/opt/ActivePython-2.7/bin
+    # Now, the droplet will include the APy install.
 else
     APYBIN=/opt/ActivePython-2.7/bin
 fi
+
+echo "ActivePython is at: $APYBIN"
 
 VENV=$BUILD_DIR/venv
 
 export PATH=$APYBIN:$PATH
 
 puts-step "Creating virtualenv"
-virtualenv --extra-search-dir=$ROOT_DIR/virtualenv_support $VENV | indent
+virtualenv -q --extra-search-dir=$ROOT_DIR/virtualenv_support $VENV | indent
 
 if [ -f $BUILD_DIR/requirements.txt ]; then
     puts-step "Installing requirements via pip"
@@ -44,4 +50,4 @@ fi
 
 puts-step "Building runtime environment"
 mkdir -p $BUILD_DIR/.profile.d
-echo 'export PATH="$HOME/venv/bin::$PATH"' > $BUILD_DIR/.profile.d/venv.sh
+echo 'export PATH="$BUILD_DIR/venv/bin:$PATH"' > $BUILD_DIR/.profile.d/venv.sh

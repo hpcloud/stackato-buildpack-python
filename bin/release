@@ -7,5 +7,5 @@ BUILD_DIR=$1
 cat <<EOF
 ---
 config_vars:
-  PATH: venv/bin:$PATH
+  PATH: $BUILD_DIR/venv/bin:$PATH
 EOF
