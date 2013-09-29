@@ -6,6 +6,4 @@ BUILD_DIR=$1
 
 cat <<EOF
 ---
-config_vars:
-  PATH: $BUILD_DIR/venv/bin:$PATH
 EOF

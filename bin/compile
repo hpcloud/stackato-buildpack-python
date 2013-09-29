@@ -5,32 +5,28 @@
 set -eo pipefail
 
 # for DEBUG; remove me.
-# set -x
+set -x
 
 # Paths.
 BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
 ROOT_DIR=$(dirname $BIN_DIR)
 BUILD_DIR=$1
 CACHE_DIR=$2
+PYTHON_VERSION=${PYTHON_VERSION:-2.7}
 
 source $BIN_DIR/utils
 
-APYBIN=/opt/ActivePython-2.7/bin
+APYBIN=/opt/ActivePython-$PYTHON_VERSION/bin
 
-echo "ActivePython is at: $APYBIN"
-
-VENV=$BUILD_DIR/venv
+echo "Using Python $APYBIN"
 
 export PATH=$APYBIN:$PATH
 
-puts-step "Creating virtualenv"
-virtualenv -q --extra-search-dir=$ROOT_DIR/virtualenv_support $VENV | indent
-
 if [ -f $BUILD_DIR/requirements.txt ]; then
     puts-step "Installing requirements via pip"
-    $VENV/bin/pip install --use-mirrors -r $BUILD_DIR/requirements.txt | indent
+    $APYBIN/pip install --use-mirrors -r $BUILD_DIR/requirements.txt | indent
 fi
 
 puts-step "Building runtime environment"
 mkdir -p $BUILD_DIR/.profile.d
-echo 'export PATH="$BUILD_DIR/venv/bin:$PATH"' > $BUILD_DIR/.profile.d/venv.sh
+echo 'export PATH="$APYBIN:$PATH"' > $BUILD_DIR/.profile.d/venv.sh
