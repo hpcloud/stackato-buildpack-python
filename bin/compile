@@ -15,24 +15,7 @@ CACHE_DIR=$2
 
 source $BIN_DIR/utils
 
-# TODO: ActivePython isn't installed in our v2 VMs yet.
-# http://bugs.activestate.com/show_bug.cgi?id=100291
-# Workaround by installing Python here, until that bug is resolved.
-if [ ! -e /opt/ActivePython-2.7 ]; then
-    puts-step "Installing ActivePython 2.7.5.6"
-    rm -rf $CACHE_DIR/x
-    mkdir -p $CACHE_DIR/x
-    cd $CACHE_DIR/x
-    # XXX: not downloading tarball, but rsycing to dea_ng during dev
-    tar zxf $ROOT_DIR/ActivePython*gz
-    cd Acti*
-    ./install.sh -I $BUILD_DIR/opt/ActivePython-2.7 | indent
-
-    APYBIN=$BUILD_DIR/opt/ActivePython-2.7/bin
-    # Now, the droplet will include the APy install.
-else
-    APYBIN=/opt/ActivePython-2.7/bin
-fi
+APYBIN=/opt/ActivePython-2.7/bin
 
 echo "ActivePython is at: $APYBIN"
 
