@@ -29,4 +29,4 @@ $APYBIN/pip install --user --use-mirrors -r $BUILD_DIR/requirements.txt | indent
 
 puts-step "Building runtime environment"
 mkdir -p $BUILD_DIR/.profile.d
-echo 'export PATH="$APYBIN:$PATH"; export PYTHONUSERBASE=$PYTHONUSERBASE' > $BUILD_DIR/.profile.d/python.sh
+echo 'export PATH="$APYBIN:$PATH"; export PYTHONUSERBASE=/app/.python' > $BUILD_DIR/.profile.d/python.sh
