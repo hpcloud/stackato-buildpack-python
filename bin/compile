@@ -5,7 +5,7 @@
 set -eo pipefail
 
 # for DEBUG; remove me.
-set -x
+# set -x
 
 # Paths.
 BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
@@ -24,9 +24,6 @@ export PATH=$APYBIN:$PATH
 
 # Use /app-based for relocation during runtime.
 export PYTHONUSERBASE=/app/app/.python
-
-ls -ld /app
-ls -l /app/
 
 puts-step "Installing requirements via pip"
 $APYBIN/pip install --user --use-mirrors -r $BUILD_DIR/requirements.txt | indent
