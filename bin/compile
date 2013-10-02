@@ -18,15 +18,19 @@ source $BIN_DIR/utils
 
 APYBIN=/opt/ActivePython-$PYTHON_VERSION/bin
 
-echo "Using Python $APYBIN"
-echo "$HOME is home"
+echo "Using Python $PYTHON_VERSION" | indent
 
 export PATH=$APYBIN:$PATH
-export PYTHONUSERBASE=$BUILD_DIR/.python
+
+# Use /app-based for relocation during runtime.
+export PYTHONUSERBASE=/app/app/.python
+
+ls -ld /app
+ls -l /app/
 
 puts-step "Installing requirements via pip"
 $APYBIN/pip install --user --use-mirrors -r $BUILD_DIR/requirements.txt | indent
 
 puts-step "Building runtime environment"
 mkdir -p $BUILD_DIR/.profile.d
-echo 'export PATH="$APYBIN:$PATH"; export PYTHONUSERBASE=/app/.python' > $BUILD_DIR/.profile.d/python.sh
+echo "export PATH=\"$APYBIN:\$PATH\"; export PYTHONUSERBASE=$PYTHONUSERBASE" > $BUILD_DIR/.profile.d/python.sh
