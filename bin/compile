@@ -21,15 +21,21 @@ APYBIN=/opt/ActivePython-$PYTHON_VERSION/bin
 puts-step "Using Python-$PYTHON_VERSION (ActivePython)"
 
 export PATH=$APYBIN:$PATH
-
 # Use /app-based for relocation during runtime.
 export PYTHONUSERBASE=/app/app/.python
-
 export PYTHONUNBUFFERED=True
 
-puts-step "Installing requirements via pip"
 cd $BUILD_DIR
-$APYBIN/pip install --user --use-mirrors -r $BUILD_DIR/requirements.txt | indent
+
+if [[ -f requirements.pypm ]]; then
+	puts-step "Installing requirements via PyPM"
+	$APYBIN/pypm install -r requirements.pypm | indent
+fi
+
+if [[ -f requirements.txt ]]; then
+	puts-step "Installing requirements via pip"
+	$APYBIN/pip install --user --use-mirrors -r requirements.txt | cleanup_pip | indent
+fi
 
 puts-step "Building runtime environment"
 mkdir -p $BUILD_DIR/.profile.d

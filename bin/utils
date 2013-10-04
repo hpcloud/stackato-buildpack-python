@@ -1,4 +1,5 @@
 # -*- sh -*-
+# Imported from https://github.com/heroku/heroku-buildpack-python/blob/master/bin/utils
 
 shopt -s extglob
 
@@ -11,7 +12,7 @@ indent() {
 }
 
 # Clean up pip output
-cleanup() {
+cleanup_pip() {
   sed $SED_FLAG -e 's/\.\.\.\+/.../g' | sed $SED_FLAG '/already satisfied/Id' | sed $SED_FLAG -e '/Overwriting/Id' |  sed $SED_FLAG -e '/python executable/Id' | sed $SED_FLAG -e '/no previously-included files/Id'
 }
 
