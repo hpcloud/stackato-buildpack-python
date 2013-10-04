@@ -1,10 +1,20 @@
 stackato-buildpack-python
 =========================
 
-Stackato buildpack for Python, using:
+This is a simple but functional buildpack for (Active)Python meant to be used
+with Stackato v3 or higher.
 
-* ActivePython
+To use this buildpack, specify your Python dependencies in one, or both, of
+the following files:
 
-* Pip, Virtualenv
+* `requirements.txt` -- pip will be used to install these
 
-* PyPM
+* `requirements.pypm` -- pypm will be used to install these
+
+By default, Python 2.7 will be used unless the `$PYTHON_VERSION` environment
+variable is set, which currently supports 2.7 and 3.3.
+
+Differences from Heroku buildpack
+---------------------------------
+
+* Lightweight (no virtualenv is created)
