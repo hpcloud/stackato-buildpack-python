@@ -16,6 +16,33 @@ PYTHON_VERSION=${PYTHON_VERSION:-2.7}
 
 source $BIN_DIR/utils
 
+cd $BUILD_DIR
+
+if [[ -f runtime.txt ]]; then
+	# parse something like python-3.2.1 into 3.2
+	PYTHON_VERSION_FULL=$(cat runtime.txt | sed -n 's/python\-\([0-9\.]*\)/\1/p')
+	PYTHON_VERSION=`echo $PYTHON_VERSION_FULL | sed -n 's/\([0-9]\.[0-9]\)\(\.[0-9]\)*/\1/p'`
+
+	if [[ ! -e /opt/ActivePython-$PYTHON_VERSION ]]; then
+		puts-warn "ActivePython-$PYTHON_VERSION is not installed"
+		exit 2
+	fi
+
+	# ensure that we do in fact have PYTHON_VERSION_FULL installed
+	if [ "$PYTHON_VERSION_FULL" != "$PYTHON_VERSION" ]; then
+		actual_version=`/opt/ActivePython-$PYTHON_VERSION/bin/python$PYTHON_VERSION -c 'import sys; print("{0.major}.{0.minor}.{0.micro}".format(sys.version_info))'`
+		if [ "$PYTHON_VERSION_FULL" != "$actual_version" ]; then
+			puts-warn "Requested Python version ($PYTHON_VERSION_FULL) did not match the installed version ($actual_version)"
+			exit 2
+		fi
+	fi
+else
+	if [[ ! -e /opt/ActivePython-$PYTHON_VERSION ]]; then
+		puts-warn "ActivePython-$PYTHON_VERSION is not installed"
+		exit 2
+	fi
+fi
+
 APYBIN=/opt/ActivePython-$PYTHON_VERSION/bin
 
 puts-step "Using Python-$PYTHON_VERSION (ActivePython)"
@@ -24,8 +51,6 @@ export PATH=$APYBIN:$PATH
 # Use /app-based for relocation during runtime.
 export PYTHONUSERBASE=/app/app/.python
 export PYTHONUNBUFFERED=True
-
-cd $BUILD_DIR
 
 if [[ -f requirements.pypm ]]; then
 	puts-step "Installing requirements via PyPM"
@@ -39,4 +64,4 @@ fi
 
 puts-step "Building runtime environment"
 mkdir -p $BUILD_DIR/.profile.d
-echo "export PATH=\"$PYTHONUSERBASE/bin:$APYBIN:\$PATH\"; export PYTHONUSERBASE=$PYTHONUSERBASE; export PYTHONUNBUFFERED=True" > $BUILD_DIR/.profile.d/python.sh
+echo "export PYTHON_VERSION=$PYTHON_VERSION; PATH=\"$PYTHONUSERBASE/bin:$APYBIN:\$PATH\"; export PYTHONUSERBASE=$PYTHONUSERBASE; export PYTHONUNBUFFERED=True" > $BUILD_DIR/.profile.d/python.sh
