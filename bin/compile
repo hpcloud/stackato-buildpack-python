@@ -16,6 +16,14 @@ PYTHON_VERSION=${PYTHON_VERSION:-2.7}
 
 source $BIN_DIR/utils
 
+cd $BUILD_DIR
+
+if [[ -f runtime.txt ]]; then
+	# parse something like python-3.2.1 into 3.2
+	PYTHON_VERSION_FULL=$(cat runtime.txt | sed -n 's/python\-\([0-9]\.[0-9]\.[0-9]\)/\1/p')
+	PYTHON_VERSION=`echo $PYTHON_VERSION_FULL | sed -n 's/\([0-9]\.[0-9]\)\(\.[0-9]\)*/\1/p'`
+fi
+
 APYBIN=/opt/ActivePython-$PYTHON_VERSION/bin
 
 puts-step "Using Python-$PYTHON_VERSION (ActivePython)"
@@ -24,8 +32,6 @@ export PATH=$APYBIN:$PATH
 # Use /app-based for relocation during runtime.
 export PYTHONUSERBASE=/app/app/.python
 export PYTHONUNBUFFERED=True
-
-cd $BUILD_DIR
 
 if [[ -f requirements.pypm ]]; then
 	puts-step "Installing requirements via PyPM"
@@ -39,4 +45,4 @@ fi
 
 puts-step "Building runtime environment"
 mkdir -p $BUILD_DIR/.profile.d
-echo "export PATH=\"$PYTHONUSERBASE/bin:$APYBIN:\$PATH\"; export PYTHONUSERBASE=$PYTHONUSERBASE; export PYTHONUNBUFFERED=True" > $BUILD_DIR/.profile.d/python.sh
+echo "export PYTHON_VERSION=$PYTHON_VERSION; PATH=\"$PYTHONUSERBASE/bin:$APYBIN:\$PATH\"; export PYTHONUSERBASE=$PYTHONUSERBASE; export PYTHONUNBUFFERED=True" > $BUILD_DIR/.profile.d/python.sh
