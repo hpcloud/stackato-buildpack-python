@@ -23,6 +23,11 @@ if [[ -f runtime.txt ]]; then
 	PYTHON_VERSION_FULL=$(cat runtime.txt | sed -n 's/python\-\([0-9\.]*\)/\1/p')
 	PYTHON_VERSION=`echo $PYTHON_VERSION_FULL | sed -n 's/\([0-9]\.[0-9]\)\(\.[0-9]\)*/\1/p'`
 
+	if [[ ! -e /opt/ActivePython-$PYTHON_VERSION ]]; then
+		puts-warn "ActivePython-$PYTHON_VERSION is not installed"
+		exit 2
+	fi
+
 	# ensure that we do in fact have PYTHON_VERSION_FULL installed
 	if [ "$PYTHON_VERSION_FULL" != "$PYTHON_VERSION" ]; then
 		actual_version=`/opt/ActivePython-$PYTHON_VERSION/bin/python$PYTHON_VERSION -c 'import sys; print("{0.major}.{0.minor}.{0.micro}".format(sys.version_info))'`
@@ -31,7 +36,12 @@ if [[ -f runtime.txt ]]; then
 			exit 2
 		fi
 	fi
-  fi
+else
+	if [[ ! -e /opt/ActivePython-$PYTHON_VERSION ]]; then
+		puts-warn "ActivePython-$PYTHON_VERSION is not installed"
+		exit 2
+	fi
+fi
 
 APYBIN=/opt/ActivePython-$PYTHON_VERSION/bin
 
