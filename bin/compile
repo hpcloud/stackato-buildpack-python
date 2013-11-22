@@ -49,7 +49,7 @@ puts-step "Using Python-$PYTHON_VERSION (ActivePython)"
 
 export PATH=$APYBIN:$PATH
 # Use /app-based for relocation during runtime.
-export PYTHONUSERBASE=/app/app/.python
+export PYTHONUSERBASE=/app/.python
 export PYTHONUNBUFFERED=True
 
 if [[ -f requirements.pypm ]]; then
