@@ -18,3 +18,8 @@ Differences from Heroku buildpack
 ---------------------------------
 
 * Lightweight (no virtualenv is created)
+
+Example app
+-----------
+
+https://github.com/Stackato-Apps/bottle-py3
